@@ -34,16 +34,15 @@ class AuthController extends Controller
             'email' => $email,
             'password' => Hash::make($raw_pass),
             'birth_date' => $request->birth_date,
+            'role_id' => 3, // default role karyawan
         ]);
-
-        // token
-        $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
             'message' => 'Registrasi berhasil',
-            'email' => $email,
-            'password' => $raw_pass, 
-            'token' => $token,
+            'credentical' => [
+                'email' => $email,
+                'password' => $raw_pass,
+            ],
         ], 201);
     }
     
@@ -54,20 +53,27 @@ class AuthController extends Controller
             'password' => 'required|string'
         ]);
 
-        if(!Auth::attempt($request->only('email', 'password'))){
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'Email atau password yang anda masukan salah '
+                'message' => 'Email atau password salah'
             ], 401);
         }
 
-        $user = Auth::user();
+        $user->tokens()->delete();
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login berhasil',
-            'user' => $user,
             'token' => $token,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role->name_role,
+            ],
         ], 200);
     }
 
