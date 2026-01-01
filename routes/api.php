@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\TeamController;
+use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\KpiController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -28,5 +31,17 @@ Route::prefix('v1')->group(function () {
         });
         
         Route::post('logout', [AuthController::class, 'logout']);
+
+        //Team
+        Route::apiResource('teams', TeamController::class);
+
+        Route::post('teams/assign-member', [TeamController::class, 'assignMember']);
+        Route::post('teams/unassign-member', [TeamController::class, 'unassignMember']);
+
+        //Event
+        Route::apiResource('events', EventController::class);
+
+        //Kpi
+        Route::apiResource('kpis', KpiController::class);
     });
 });

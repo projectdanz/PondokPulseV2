@@ -11,9 +11,7 @@ class Kpi extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'team_id',
-        'periode',
+        'periode_id',
         'deskripsi',
         'weight',
         'target',
@@ -23,7 +21,6 @@ class Kpi extends Model
     ];
 
     protected $casts = [
-        'periode' => 'date',
         'weight' => 'integer',
         'target' => 'integer',
         'achievement' => 'integer',
@@ -31,18 +28,10 @@ class Kpi extends Model
     ];
 
     /**
-     * Get the user that owns the KPI.
+     * Get the periode that owns the KPI.
      */
-    public function user(): BelongsTo
+    public function periode(): BelongsTo
     {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the team that owns the KPI.
-     */
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Periode::class);
     }
 }

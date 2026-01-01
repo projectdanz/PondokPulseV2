@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
-            $table->id();
-            $table->string('name_event');
-            $table->text('description_event')->nullable();
-            $table->date('date_event')->nullable();
-            $table->timestamps();
+        Schema::table('kpis', function (Blueprint $table) {
+            $table->foreignId('periode_id')->constrained('periodes')->onDelete('cascade');
         });
     }
 
@@ -25,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::table('kpis', function (Blueprint $table) {
+            $table->dropForeign(['periode_id']);
+            $table->dropIndex(['periode_id']);
+        });
     }
 };

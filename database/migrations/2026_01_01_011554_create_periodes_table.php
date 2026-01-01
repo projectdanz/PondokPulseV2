@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('periodes', function (Blueprint $table) {
             $table->id();
-            $table->string('name_event');
-            $table->text('description_event')->nullable();
-            $table->date('date_event')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('team_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('periode', 7);
             $table->timestamps();
+            $table->unique(['user_id', 'periode']);
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('periodes');
     }
 };

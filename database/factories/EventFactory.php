@@ -37,6 +37,7 @@ class EventFactory extends Factory
         return [
             'name_event' => fake()->randomElement($eventNames),
             'description_event' => fake()->optional(0.8)->paragraph(),
+            'date_event' => fake()->optional(0.8)->date(),
         ];
     }
 }

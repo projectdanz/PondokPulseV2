@@ -26,16 +26,13 @@ class KpiFactory extends Factory
         
         // Determine status based on achievement percentage
         $status = match(true) {
-            $percentage >= 100 => 'achieved',
-            $percentage >= 80 => 'warning',
-            $percentage >= 50 => 'draft',
+            $percentage >= 1 => 'achieved',
+            $percentage >= 0.8 => 'warning',
             default => 'failed',
         };
 
         return [
-            'user_id' => \App\Models\User::factory(),
-            'team_id' => \App\Models\Team::factory(),
-            'periode' => fake()->dateTimeBetween('-6 months', 'now')->format('Y-m-d'),
+            'periode_id' => \App\Models\Periode::factory(),
             'deskripsi' => fake()->sentence(10),
             'weight' => $weight,
             'target' => $target,

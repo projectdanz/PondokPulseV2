@@ -66,10 +66,14 @@ class DatabaseSeeder extends Seeder
         // Step 8: Create KPIs (needs users and teams)
         foreach ($users->random(40) as $user) {
             \App\Models\Kpi::factory(3)->create([
-                'user_id' => $user->id,
-                'team_id' => $user->team_id,
+                'periode_id' => \App\Models\Periode::factory()->create()->id,
             ]);
         }
+
+        // Step 9: Seed Periodes
+        $this->call([
+            PeriodeSeeder::class,
+        ]);
     }
 
 }

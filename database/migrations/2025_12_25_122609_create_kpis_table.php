@@ -13,15 +13,12 @@ return new class extends Migration
     {
         Schema::create('kpis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('team_id')->constrained()->onDelete('cascade');
-            $table->date('periode');
-            $table->text('deskripsi')->nullable();
-            $table->integer('weight');
-            $table->integer('target');
-            $table->integer('achievement');
-            $table->integer('score');
-            $table->enum('status', ['draft', 'failed', 'warning', 'achieved'])->default('draft');
+            $table->text('deskripsi');
+            $table->unsignedTinyInteger('weight');
+            $table->unsignedInteger('target');
+            $table->unsignedInteger('achievement')->default(0);
+            $table->unsignedSmallInteger('score')->default(0);
+            $table->enum('status', ['failed', 'warning', 'achieved'])->default('failed');
             $table->timestamps();
         });
     }
