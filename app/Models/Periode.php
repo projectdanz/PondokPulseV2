@@ -31,4 +31,12 @@ class Periode extends Model
     {
         return $this->belongsTo(Team::class);
     }
+
+    /**
+     * Get the kpi for the periode.
+     */
+    public function kpis()
+    {
+        return $this->hasMany(Kpi::class);
+    }
 }

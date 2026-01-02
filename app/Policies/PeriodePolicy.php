@@ -2,12 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Kpi;
-use App\Models\User;
 use App\Models\Periode;
+use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class KpiPolicy
+class PeriodePolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -20,17 +19,20 @@ class KpiPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Kpi $kpi): bool
+    public function view(User $user, Periode $periode): bool
     {
+        //Role Manager
         if ($user->role->name_role === 'Manager') {
             return true;
+        }   
+
+        //Role Koordinator
+        if ($user->role->name_role === 'Koordinator') {
+            return $periode->team_id === $user->team_id;
         }
 
-        if ($user->role->name_role === "Koordinator" && $user->team_id === $kpi->periode->team_id){
-            return true;
-        }
-
-        return $user->id === $kpi->periode->user_id;
+        //Role Karyawan
+        return $user->id === $periode->user_id;
     }
 
     /**
@@ -44,15 +46,15 @@ class KpiPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Kpi $kpi): bool
+    public function update(User $user, Periode $periode): bool
     {
-        return $user->id === $kpi->periode->user_id;
+        return $user->id === $periode->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Kpi $kpi): bool
+    public function delete(User $user, Periode $periode): bool
     {
         return $user->role->name_role === 'Manager';
     }
@@ -60,7 +62,7 @@ class KpiPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Kpi $kpi): bool
+    public function restore(User $user, Periode $periode): bool
     {
         return false;
     }
@@ -68,7 +70,7 @@ class KpiPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Kpi $kpi): bool
+    public function forceDelete(User $user, Periode $periode): bool
     {
         return false;
     }

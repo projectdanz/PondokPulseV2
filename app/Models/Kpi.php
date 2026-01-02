@@ -23,7 +23,7 @@ class Kpi extends Model
     protected $casts = [
         'weight' => 'integer',
         'target' => 'integer',
-        'achievement' => 'integer',
+        'achievement' => 'integer', 
         'score' => 'integer',
     ];
 

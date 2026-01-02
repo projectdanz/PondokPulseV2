@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\KpiController;
+use App\Http\Controllers\Api\PeriodeController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -41,7 +42,13 @@ Route::prefix('v1')->group(function () {
         //Event
         Route::apiResource('events', EventController::class);
 
+        //Periode
+        Route::apiResource('periodes', PeriodeController::class);
+
+        Route::apiResource('periodes.kpis', KpiController::class)->only('store', 'update', 'destroy');
+
         //Kpi
-        Route::apiResource('kpis', KpiController::class);
+        Route::get('kpis', [KpiController::class, 'index']);
+        Route::get('kpis/{kpi}', [KpiController::class, 'show']);
     });
 });

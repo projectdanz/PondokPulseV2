@@ -5,28 +5,36 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kpi;
+use App\Models\Periode;
+
 
 class KpiController extends Controller
 {
     public function index(){
         $user = auth()->user();
 
-        //Manager -> semua kpi
-        if ($user->role->name_role === 'Manager'){
-            return kpi::with(['user', 'team'])->get();
+        $this->authorize('viewAny', Kpi::class);
+
+        if($user->role->name_role === "Manager") {
+            $kpis = Kpi::all();
+        } elseif($user->role->name_role === "Koordinator") {
+            $kpis = Kpi::whereHas('periode', fn($q) => $q->where('team_id', $user->team_id))->get();
+        } else {
+            $kpis = Kpi::whereHas('periode', fn($q) => $q->where('user_id', $user->id))->get();
         }
 
-        //Koordinator -> kpi anggota team
-        if ($user->team && $user->id === $user->team->user_id){
-           return kpi::where('team_id', $user->team_id)->with(['user', 'team'])->get();
-        }
-
-        //User -> kpi sendiri
-        return kpi::where('user_id', $user->id)->with(['user', 'team'])->get();
+        return response()->json([
+            'message' => 'KPI berhasil diambil',
+            'user' => $user->role->name_role,
+            'data' => $kpis
+        ], 200);
     }
 
-    public function show($id){
-        $kpi = kpi::with(['user', 'team'])->findOrFail($id);
+    public function show(Kpi $kpi){
+        $kpi->load([
+            'periode.user',
+            'periode.team',
+        ]);
 
         $this->authorize('view', $kpi);
 
@@ -36,35 +44,28 @@ class KpiController extends Controller
         ], 200);
     }
 
-    public function store(Request $request){
+    public function store(Request $request, Periode $periode){
+        $this->authorize('create', $periode);
+        
         $request->validate([
             'deskripsi' => 'required|string',
             'weight' => 'required|integer|min:1|max:100',
             'target' => 'required|integer|min:1',
-            'periode_id' => 'required|integer',
             'achievement' => 'nullable|integer|min:0',
         ]);
 
-        $user = auth()->user();
-
-        $periode = $request->periode_id;
-        $achievement = $request->achievement;
+        $achievement = $request->achievement ?? 0;
         $target = $request->target;
         $weight = $request->weight;
 
-        $percentage = $achievement / $target;
-        $score = $percentage * $weight;
+        $percentage = ($achievement / $target) * 100;
+        $score = min(($percentage / 100) * $weight, $weight);
 
-        if ($percentage < 0.8){
-            $status = 'failed';
-        }elseif ($percentage < 1){
-            $status = 'warning';
-        }else{
-            $status = 'achieved';
-        }
+        $status = $achievement === null ? 'failed' : (
+            $percentage >= 100 ? 'achieved' 
+            : ($percentage >= 80 ? 'warning' : 'failed'));
 
-        $kpi = Kpi::create([
-            'periode_id' => $periode,
+        $kpi = $periode->kpis()->create([
             'deskripsi' => $request->deskripsi,
             'weight' => $weight,
             'target' => $target,
@@ -79,9 +80,9 @@ class KpiController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $kpi)
     {
-        $kpi = Kpi::findOrFail($id);
+        $kpi = Kpi::findOrFail($kpi);
 
         $request->validate([
             'achievement' => 'nullable|integer|min:0',
@@ -104,8 +105,7 @@ class KpiController extends Controller
         $status = match (true) {
             $percentage >= 100 => 'achieved',
             $percentage >= 80  => 'warning',    
-            $percentage >= 50  => 'draft',
-           default            => 'failed',
+            default => 'failed',
         };
 
         $data = [
@@ -125,6 +125,24 @@ class KpiController extends Controller
             'message' => 'Achievement updated',
             'data' => $kpi
         ]);
-}
+    }
+
+    public function destroy(Periode $periode, Kpi $kpi)
+    {
+        $this->authorize('delete', $kpi);
+
+        if($kpi->periode_id !== $periode->id) {
+            return response()->json([
+                'message' => 'KPI tidak ditemukan',
+            ], 404);
+        }
+
+        $kpi->delete();
+
+        return response()->json([
+            'message' => 'KPI berhasil dihapus',
+            'data' => $kpi
+        ], 200);
+    }
 
 }
