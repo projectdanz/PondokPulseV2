@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('role_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('team_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('job_desk_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('jobDesk_id')->nullable()->constrained()->nullOnDelete();
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['role_id']);
             $table->dropForeign(['team_id']);
-            $table->dropForeign(['job_desk_id']);
+            $table->dropForeign(['jobDesk_id']);
         });
     }
 };

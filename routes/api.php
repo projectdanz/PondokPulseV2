@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\KpiController;
 use App\Http\Controllers\Api\PeriodeController;
+use App\Http\Controllers\Api\JobDeskController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -50,5 +51,8 @@ Route::prefix('v1')->group(function () {
         //Kpi
         Route::get('kpis', [KpiController::class, 'index']);
         Route::get('kpis/{kpi}', [KpiController::class, 'show']);
+
+        //JobDesk
+        Route::apiResource('jobdesks', JobDeskController::class);
     });
 });

@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             $user->update([
                 'role_id' => $roles->random()->id,
                 'team_id' => $teams->random()->id,
-                'job_desk_id' => $jobDesks->random()->id,
+                'jobDesk_id' => $jobDesks->random()->id,
             ]);
         }
         

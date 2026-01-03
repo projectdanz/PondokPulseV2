@@ -5,9 +5,13 @@ namespace App\Providers;
 use App\Models\Event;
 use App\Models\Team;
 use App\Models\Kpi;
+use App\Models\Periode;
+use App\Models\JobDesk;
 use App\Policies\EventPolicy;
 use App\Policies\TeamPolicy;
 use App\Policies\KpiPolicy;
+use App\Policies\PeriodePolicy;
+use App\Policies\JobDeskPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -21,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
         Team::class => TeamPolicy::class,
         Event::class => EventPolicy::class,
         Kpi::class => KpiPolicy::class,
+        Periode::class => PeriodePolicy::class,
+        JobDesk::class => JobDeskPolicy::class,
     ];
 
     /**

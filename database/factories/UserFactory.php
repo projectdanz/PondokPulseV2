@@ -36,7 +36,7 @@ class UserFactory extends Factory
             'exit_year' => $isActive ? null : fake()->numberBetween($joinYear + 1, 2030),
             'role_id' => null, // Will be set after roles are seeded
             'team_id' => null, // Will be set after teams are seeded
-            'job_desk_id' => null, // Will be set after job_desks are seeded
+            'jobDesk_id' => null, // Will be set after jobDesk are seeded
             'remember_token' => Str::random(10),
         ];
     }

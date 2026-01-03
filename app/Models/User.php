@@ -24,7 +24,7 @@ class User extends Authenticatable
         'password',
         'role_id',
         'team_id',
-        'job_desk_id',
+        'jobDesk_id',
         'is_active',
         'join_year',
         'exit_year',

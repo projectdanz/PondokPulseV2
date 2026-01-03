@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class JobDesk extends Model
 {
     use HasFactory;
-
+    protected $table = 'jobDesks';
     protected $fillable = [
         'name_job',
         'description_job',
