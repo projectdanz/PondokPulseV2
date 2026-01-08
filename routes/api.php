@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\KpiController;
 use App\Http\Controllers\Api\PeriodeController;
+use App\Http\Controllers\Api\AbsensiController;
 use App\Http\Controllers\Api\JobDeskController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,5 +55,8 @@ Route::prefix('v1')->group(function () {
 
         //JobDesk
         Route::apiResource('jobdesks', JobDeskController::class);
+
+        //Absensi
+        Route::apiResource('absensis', AbsensiController::class)->only('index', 'store', 'update', 'show');
     });
 });

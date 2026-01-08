@@ -10,6 +10,7 @@ use App\Models\JobDesk;
 use App\Policies\EventPolicy;
 use App\Policies\TeamPolicy;
 use App\Policies\KpiPolicy;
+use App\Policies\AbsensiPolicy;
 use App\Policies\PeriodePolicy;
 use App\Policies\JobDeskPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -27,6 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         Kpi::class => KpiPolicy::class,
         Periode::class => PeriodePolicy::class,
         JobDesk::class => JobDeskPolicy::class,
+        Absensi::class => AbsensiPolicy::class,
     ];
 
     /**

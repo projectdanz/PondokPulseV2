@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->date('date');
-            $table->enum('status', ['hadir', 'izin', 'sakit', 'alpa'])->default('hadir');
+            $table->foreignId('event_id')->nullable()->constrained()->nullOnDelete();
+            $table->enum('status', ['hadir', 'izin', 'sakit', 'alpa'])->default('alpa');
             $table->text('note')->nullable();
             $table->timestamps();
         });
