@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('absensis', function (Blueprint $table) {
-            $table->foreignId('event_id')->nullable()->constrained()->nullOnDelete();
+        Schema::create('programs', function (Blueprint $table) {
+            $table->id();
+            $table->string('name_program');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('absensis', function (Blueprint $table) {
-            $table->dropForeign(['event_id']);
-        });
+        Schema::dropIfExists('programs');
     }
 };

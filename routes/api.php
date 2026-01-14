@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\KpiController;
 use App\Http\Controllers\Api\PeriodeController;
 use App\Http\Controllers\Api\AbsensiController;
 use App\Http\Controllers\Api\JobDeskController;
+use App\Http\Controllers\Api\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -58,5 +59,14 @@ Route::prefix('v1')->group(function () {
 
         //Absensi
         Route::apiResource('absensis', AbsensiController::class)->only('index', 'store', 'update', 'show');
+
+        // List User Profile
+        Route::get('users', [UserProfileController::class, 'index']);
+
+        // Detail User Profile
+        Route::get('users/{userProfile}', [UserProfileController::class, 'show']);
+        
+        // Update User Profile
+        Route::put('users/{userProfile}', [UserProfileController::class, 'update']);
     });
 });

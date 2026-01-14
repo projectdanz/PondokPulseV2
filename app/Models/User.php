@@ -23,11 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'team_id',
-        'jobDesk_id',
         'is_active',
-        'join_year',
-        'exit_year',
     ];
 
     /**
@@ -64,24 +60,9 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    /**
-     * Get the team that owns the user.
-     */
-    public function team()
-    {
-        return $this->belongsTo(Team::class);
-    }
 
     /**
-     * Get the job desk that owns the user.
-     */
-    public function jobDesk()
-    {
-        return $this->belongsTo(JobDesk::class);
-    }
-
-    /**
-     * Get the profile associated with the user.
+     * Get the profile asociated with the user.
      */
     public function profile()
     {

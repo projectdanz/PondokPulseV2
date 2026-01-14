@@ -1,0 +1,21 @@
+[90m= [39m[34;4mApp\Models\UserProfile[39;24m {#6047
+    [34mid[39m: [35m50[39m,
+    [34muser_id[39m: [35m141[39m,
+    [34mteam_id[39m: [35m9[39m,
+    [34mjobDesk_id[39m: [35m9[39m,
+    [34mbirth_date[39m: "[32m1990-03-15[39m",
+    [34mphone_number[39m: "[32m081126463756[39m",
+    [34mparent_phone_number[39m: "[32m085541471067[39m",
+    [34mgender[39m: "[32mLaki-laki[39m",
+    [34maddress[39m: """
+      [32m1905 Orn Roads[39m\n
+      [32mMikemouth, GA 41004[39m
+      """,
+    [34mprofile_link[39m: "[32mhttps://via.placeholder.com/400x400.png/0044aa?text=people+men+ipsa[39m",
+    [34mjoin_year[39m: [35m2019[39m,
+    [34mexit_year[39m: [35m2020[39m,
+    [34mcreated_at[39m: "[32m2026-01-10 02:04:44[39m",
+    [34mupdated_at[39m: "[32m2026-01-10 02:04:44[39m",
+    [34mprogram_id[39m: [35m3[39m,
+  }
+

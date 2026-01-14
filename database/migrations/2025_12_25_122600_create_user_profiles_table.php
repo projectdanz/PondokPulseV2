@@ -14,12 +14,16 @@ return new class extends Migration
         Schema::create('user_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('team_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('jobDesk_id')->nullable()->constrained('jobDesks')->nullOnDelete();
             $table->date('birth_date')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('parent_phone_number')->nullable();
             $table->string('gender')->nullable();
             $table->string('address')->nullable();
             $table->string('profile_link');
+            $table->integer('join_year')->nullable();
+            $table->integer('exit_year')->nullable();
             $table->timestamps();
         });
     }

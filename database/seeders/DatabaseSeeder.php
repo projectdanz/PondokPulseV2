@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             JobDeskSeeder::class,
+            ProgramSeeder::class,
         ]);
         
         // Step 2: Create users without foreign keys
@@ -38,12 +39,11 @@ class DatabaseSeeder extends Seeder
         $roles = \App\Models\Role::all();
         $teams = \App\Models\Team::all();
         $jobDesks = \App\Models\JobDesk::all();
+        $programs = \App\Models\Program::all();
         
         foreach ($users as $user) {
             $user->update([
                 'role_id' => $roles->random()->id,
-                'team_id' => $teams->random()->id,
-                'jobDesk_id' => $jobDesks->random()->id,
             ]);
         }
         
@@ -51,6 +51,9 @@ class DatabaseSeeder extends Seeder
         foreach ($users as $user) {
             \App\Models\UserProfile::factory()->create([
                 'user_id' => $user->id,
+                'team_id' => $teams->random()->id,
+                'jobDesk_id' => $jobDesks->random()->id,
+                'program_id' => $programs->random()->id,
             ]);
         }
         
