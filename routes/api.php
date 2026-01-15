@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PeriodeController;
 use App\Http\Controllers\Api\AbsensiController;
 use App\Http\Controllers\Api\JobDeskController;
 use App\Http\Controllers\Api\UserProfileController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -68,5 +69,8 @@ Route::prefix('v1')->group(function () {
         
         // Update User Profile
         Route::put('users/{userProfile}', [UserProfileController::class, 'update']);
+
+        // User
+        Route::apiResource('user', UserController::class);
     });
 });
