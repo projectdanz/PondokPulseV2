@@ -70,6 +70,9 @@ Route::prefix('v1')->group(function () {
         // Update User Profile
         Route::put('users/{userProfile}', [UserProfileController::class, 'update']);
 
+        // Create User Profile
+        Route::post('users', [UserProfileController::class, 'store']);
+
         // User
         Route::apiResource('user', UserController::class);
     });

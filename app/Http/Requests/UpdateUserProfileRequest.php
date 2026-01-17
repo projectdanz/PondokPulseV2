@@ -34,7 +34,7 @@ class UpdateUserProfileRequest extends FormRequest
         if(in_array($role, ['Manager', 'Koordinator'])) {
             $rules = array_merge($rules, [
                 'team_id' => 'sometimes|exists:teams,id',
-                'jobDesk_id' => 'sometimes|exists:job_desks,id',
+                'jobDesk_id' => 'sometimes|exists:jobDesks,id',
                 'program_id' => 'sometimes|exists:programs,id',
                 'gender' => 'sometimes|in:Male,Female',
                 'join_year' => 'sometimes|integer|min:2000|max:' . date('Y'),
