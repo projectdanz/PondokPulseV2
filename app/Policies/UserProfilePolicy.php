@@ -37,7 +37,7 @@ class UserProfilePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return in_array($user->role->name_role, ['Manager', 'Koordinator']);
     }
 
     /**
@@ -50,7 +50,7 @@ class UserProfilePolicy
         }
 
         if ($user->role->name_role === 'Koordinator') {
-            return true;
+            return $user->team_id === $userProfile->team_id;
         }
 
         return $user->id === $userProfile->user_id;

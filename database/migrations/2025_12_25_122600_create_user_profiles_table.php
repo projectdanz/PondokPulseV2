@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('parent_phone_number')->nullable();
             $table->string('gender')->nullable();
             $table->string('address')->nullable();
-            $table->string('profile_link');
+            $table->string('profile_link')->nullable();
             $table->integer('join_year')->nullable();
             $table->integer('exit_year')->nullable();
             $table->timestamps();

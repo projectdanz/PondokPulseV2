@@ -25,6 +25,20 @@ class AuthController extends Controller
         $username = Str::lower(Str::slug($request->name, ''));
         $email = $username . $random . '@pondokit.com';
 
+        // Check if email already exists, regenerate if needed
+        $attempts = 0;
+        while (User::where('email', $email)->exists() && $attempts < 10) {
+            $random = rand(10, 99);
+            $email = $username . $random . '@pondokit.com';
+            $attempts++;
+        }
+
+        if ($attempts >= 10) {
+            return response()->json([
+                'message' => 'Gagal membuat email unik. Silakan coba lagi.',
+            ], 422);
+        }
+
         // Register Pass
         $raw_pass = $username . $request->birth_date . $random;
 

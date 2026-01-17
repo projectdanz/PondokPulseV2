@@ -28,7 +28,6 @@ class UserProfile extends Model
     protected function casts(): array
     {
         return [
-            'is_active' => 'boolean',
             'join_year' => 'integer',
             'exit_year' => 'integer',
         ];

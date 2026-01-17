@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Team;
+use App\Models\User;
 
 class TeamController extends Controller
 {
@@ -49,7 +50,7 @@ class TeamController extends Controller
         $team->update($request->only('name_team', 'user_id'));
 
         return response()->json([
-            'message' => 'Team updated successfully',
+            'message' => 'Team berhasil diupdate',
             'data' => $team
         ], 200);
     }
@@ -75,11 +76,13 @@ class TeamController extends Controller
         $team->delete();
 
         return response()->json([
-            'message' => 'Team deleted successfully',
+            'message' => 'Team berhasil dihapus',
         ], 200);
     }
 
     public function assignMember(Request $request){
+        $this->authorize('update', Team::class);
+
         $request->validate([
             'team_id' => 'required|exists:teams,id',
             'user_id' => 'required|exists:users,id',
@@ -90,11 +93,13 @@ class TeamController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'User assigned to team successfully',
-        ]);
+            'message' => 'User berhasil ditambahkan ke team',
+        ], 200);
     }
 
     public function unassignMember(Request $request){
+        $this->authorize('update', Team::class);
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
         ]);
@@ -104,7 +109,7 @@ class TeamController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'User unassigned from team successfully',
-        ]);
+            'message' => 'User berhasil dihapus dari team',
+        ], 200);
     }
 }

@@ -16,13 +16,13 @@ class AbsensiController extends Controller
         if($user->role->name_role === "Manager") {
             $absensi = Absensi::with("user")->get();
         }elseif($user->role->name_role === "Koordinator") {
-            $absensi = Absensi::with('user')->whereHas('user', fn($q) => $q->where('team_id', $user->team_id));
+            $absensi = Absensi::with('user')->whereHas('user', fn($q) => $q->where('team_id', $user->team_id))->get();
         }else{
             $absensi = Absensi::where("user_id", $user->id)->get();
         }
 
         return response()->json([
-            'message' => 'data absensi berhasil didapatkan',
+            'message' => 'Data absensi berhasil didapatkan',
             'data' => $absensi
         ], 200);
     }
@@ -48,34 +48,19 @@ class AbsensiController extends Controller
     }
 
     public function update(Request $request, Absensi $absensi) {
-        $user = auth()->user();
-        if ($user->role?->name_role !== 'Koordinator') {
-            return response()->json([
-                'message' => 'Anda tidak memiliki izin untuk mengubah absensi',
-            ], 403);
-        }
+        $this->authorize('update', $absensi);
 
-        if (!$absensi->relationLoaded('user')) {
-            $absensi->load('user');
-        }
+        $data = $request->validate([
+            'status' => 'required|in:hadir,izin,sakit,alpa',
+            'note' => 'nullable|string',
+        ]);
 
-        if ($absensi->user?->team_id !== $user->team_id) {
-            return response()->json([
-            'message' => 'Anda tidak memiliki izin untuk mengubah absensi',
-        ], 403);
-    }
+        $absensi->update($data);
 
-    $data = $request->validate([
-        'status' => 'required|in:hadir,izin,sakit,alpa',
-        'note' => 'nullable|string',
-    ]);
-
-    $absensi->update($data);
-
-    return response()->json([
-        'message' => 'data absensi berhasil diupdate',
-        'data' => $absensi->load('user')
-    ], 200);
+        return response()->json([
+            'message' => 'Data absensi berhasil diupdate',
+            'data' => $absensi->load('user')
+        ], 200);
     }
 
     public function show(Absensi $absensi)

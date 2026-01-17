@@ -16,22 +16,18 @@ class UserProfileController extends Controller
         $user = auth()->user();
         
         $query = UserProfile::with(['user', 'team', 'jobDesk', 'program']);
-        if($user->role->name_role === 'Manager'){
-            return $query->get();
-        }
-
-        if ($user->team_id->name_role === 'Koordinator') {
+        
+        if ($user->role->name_role === 'Koordinator') {
             $query->where('team_id', $user->team_id);
-        }
-
-        if ($user->role->name_role === 'Karyawan') {
+        } elseif ($user->role->name_role === 'Karyawan') {
             $query->where('user_id', $user->id);
         }
+        // Manager can see all - no filter needed
 
         return response()->json([
             'message' => 'User profile berhasil didapatkan',
             'data' => $query->get()
-        ]);
+        ], 200);
     }
 
     public function update(

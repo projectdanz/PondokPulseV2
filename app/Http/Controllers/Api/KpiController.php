@@ -83,6 +83,8 @@ class KpiController extends Controller
     public function update(Request $request, $kpi)
     {
         $kpi = Kpi::findOrFail($kpi);
+        
+        $this->authorize('update', $kpi);
 
         $request->validate([
             'achievement' => 'nullable|integer|min:0',

@@ -47,8 +47,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
-            'join_year' => 'integer',
-            'exit_year' => 'integer',
         ];
     }
 
@@ -60,6 +58,13 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    /**
+     * Get the team that the user belongs to.
+     */
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 
     /**
      * Get the profile asociated with the user.

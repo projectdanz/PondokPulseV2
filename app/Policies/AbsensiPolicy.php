@@ -49,8 +49,8 @@ class AbsensiPolicy
             return false;
         }
 
-    return $absensi->user->team_id === $user->team_id;
-}
+        return $absensi->user->team_id === $user->team_id;
+    }
 
 
     /**
