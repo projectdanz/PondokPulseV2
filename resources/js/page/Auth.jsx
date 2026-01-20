@@ -15,9 +15,6 @@ function Auth() {
         date: "", 
     });
 
-    const handleRegister = () => {
-    }
-
     const handleChange = (e) => {
         setForm({
             ...form,
@@ -29,6 +26,11 @@ function Auth() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const endPoint = isLogin ? "/login" : "/register";
+        const dashboardMap = {
+            Manager: "/dashboard/manager",
+            Koordinator: "/dashboard/koordinator",
+            Karyawan: "/dashboard/karyawan"
+        }
         const payLoad = isLogin ? {
             email: form.email,
             password: form.password,
@@ -41,7 +43,10 @@ function Auth() {
             const res = await api.post(endPoint, payLoad)
             const data = res.data;
             localStorage.setItem("data", JSON.stringify(data));
-            {isLogin ? navigate("/dashboard") : navigate("/register-success")};
+            const role = await data.user.role
+            console.log(role)
+            console.log(data)
+            {isLogin ? navigate(dashboardMap[role]) : navigate("/register-success")};
         } catch (error) {
             if (error.response) {
                 console.log("STATUS:", error.response.status);
@@ -139,7 +144,6 @@ function Auth() {
                                     size="medium"
                                     type="submit"
                                     styling="circle"
-                                    onClick={isLogin ? '' : handleRegister}
                                 >
                                     {isLogin ? "Masuk" : "Daftar"}
                                 </Button>
