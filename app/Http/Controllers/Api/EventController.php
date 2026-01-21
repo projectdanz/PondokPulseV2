@@ -8,16 +8,27 @@ use App\Models\Event;
 
 class EventController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Event::class);
 
-        $event = Event::all();
+        $perPage = min($request->per_page ?? 10, 50);
+
+        $events = Event::paginate($perPage);
+
         return response()->json([
             'message' => 'Event berhasil diambil',
-            'data' => $event
+            'data' => $events->items(),
+            'meta' => [
+                'current_page' => $events->currentPage(),
+                'last_page' => $events->lastPage(),
+                'per_page' => $events->perPage(),
+                'total' => $events->total(),
+            ]
         ], 200);
     }
+
 
     public function show($id){
         $event = Event::findOrFail($id);

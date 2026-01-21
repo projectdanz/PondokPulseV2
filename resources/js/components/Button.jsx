@@ -1,6 +1,14 @@
 import { useState } from "react";
 
-const Button = ({ children, onClick, variant, size, styling, type}) => {
+const Button = ({
+    children,
+    onClick,
+    variant,
+    size,
+    styling,
+    type,
+    className = "",
+}) => {
     const [loading, setLoading] = useState(false);
 
     const variants = {
@@ -11,25 +19,30 @@ const Button = ({ children, onClick, variant, size, styling, type}) => {
     };
 
     const sizes = {
-        small: "py-3 w-[3rem] tracking-wider font-semibold",
+        small: "h-10 w-10 flex-shrink-0 text-lg",
         medium: "py-2 w-[8rem] tracking-wider font-semibold",
         large: "py-3 w-3xs font-bold text-2xl tracking-wider",
-    }
+    };
 
     const styles = {
         circle: "rounded-full",
         square: "rounded-none",
         rounded: "rounded-lg",
-    }
+    };
 
-    const ClassName = `
-    ${variants[variant]}
-    ${sizes[size]}
-    ${styles[styling]}
+    const baseClass =
+        "inline-flex items-center justify-center transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+
+    const combinedClassName = `
+    ${baseClass}
+    ${variants[variant] || ""}
+    ${sizes[size] || ""}
+    ${styles[styling] || ""}
+    ${className}
     `;
 
     return (
-        <button type={type} className={ClassName} onClick={onClick}>
+        <button type={type} className={combinedClassName} onClick={onClick}>
             {loading ? "Loading..." : children}
         </button>
     );

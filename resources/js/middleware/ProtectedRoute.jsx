@@ -10,10 +10,6 @@ const ProtectedRoute = ({ children, role }) => {
     const token = data.token;
     const user= data.user;
 
-
-  console.log(token)
-  console.log(user)
-
   if (!token || !user || user === "undefined") {
     return <Navigate to="/auth" replace />;
   }
