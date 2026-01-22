@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
-import DashboardLayout from "./DashboardLayout";
+import DashboardLayout from "../DashboardLayout";
 import axios from "axios";
-import Button from "../components/Button";
-import Pagination from "../components/Pagination";
-import Modal from "../components/Modal";
-import Input from "../components/Input";
+import Button from "../../components/Button";
+import Modal from "../../components/Modal";
+import Input from "../../components/Input";
 import { FaPencil, FaRegTrashCan } from "react-icons/fa6";
 
-function Event() {
+function PeriodeManagement() {
     const [loading, setLoading] = useState(true);
-    const [events, setEvents] = useState([]);
-    const [message, setMessage] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [periodes, setPeriodes] = useState([]);
 
     // Modal states
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -20,43 +16,36 @@ function Event() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     // Form and selection state
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedPeriode, setSelectedPeriode] = useState(null);
     const [formData, setFormData] = useState({
-        name_event: "",
-        description_event: "",
-        date_event: "",
+        periode: "",
     });
 
     const dataRaw = localStorage.getItem("data");
     const tokenData = dataRaw ? JSON.parse(dataRaw) : null;
     const token = tokenData?.token;
 
-    const fetchData = async (page = 1) => {
+    const fetchData = async () => {
         if (!token) return;
         setLoading(true);
         try {
             const res = await axios.get(
-                `http://127.0.0.1:8000/api/v1/events?page=${page}&per_page=10`,
+                "http://127.0.0.1:8000/api/v1/periodes",
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 },
             );
-            setEvents(res.data.data);
-            setMessage(res.data.message);
-            setCurrentPage(res.data.meta.current_page);
-            setTotalPages(res.data.meta.last_page);
+            setPeriodes(res.data.data);
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error("Error fetching periodes:", error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchData(currentPage);
-    }, [currentPage]);
+        fetchData();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -64,35 +53,31 @@ function Event() {
     };
 
     const resetForm = () => {
-        setFormData({
-            name_event: "",
-            description_event: "",
-            date_event: "",
-        });
-        setSelectedEvent(null);
+        setFormData({ periode: "" });
+        setSelectedPeriode(null);
     };
 
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://127.0.0.1:8000/api/v1/events", formData, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            await axios.post(
+                "http://127.0.0.1:8000/api/v1/periodes",
+                formData,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                },
+            );
             setIsCreateModalOpen(false);
             resetForm();
-            fetchData(currentPage);
+            fetchData();
         } catch (error) {
-            console.error("Error creating event:", error);
+            console.error("Error creating periode:", error);
         }
     };
 
-    const handleEdit = (event) => {
-        setSelectedEvent(event);
-        setFormData({
-            name_event: event.name_event || "",
-            description_event: event.description_event || "",
-            date_event: event.date_event || "",
-        });
+    const handleEdit = (periode) => {
+        setSelectedPeriode(periode);
+        setFormData({ periode: periode.periode || "" });
         setIsEditModalOpen(true);
     };
 
@@ -100,7 +85,7 @@ function Event() {
         e.preventDefault();
         try {
             await axios.put(
-                `http://127.0.0.1:8000/api/v1/events/${selectedEvent.id}`,
+                `http://127.0.0.1:8000/api/v1/periodes/${selectedPeriode.id}`,
                 formData,
                 {
                     headers: { Authorization: `Bearer ${token}` },
@@ -108,38 +93,38 @@ function Event() {
             );
             setIsEditModalOpen(false);
             resetForm();
-            fetchData(currentPage);
+            fetchData();
         } catch (error) {
-            console.error("Error updating event:", error);
+            console.error("Error updating periode:", error);
         }
     };
 
-    const handleDeleteClick = (event) => {
-        setSelectedEvent(event);
+    const handleDeleteClick = (periode) => {
+        setSelectedPeriode(periode);
         setIsDeleteModalOpen(true);
     };
 
     const handleDeleteConfirm = async () => {
         try {
             await axios.delete(
-                `http://127.0.0.1:8000/api/v1/events/${selectedEvent.id}`,
+                `http://127.0.0.1:8000/api/v1/periodes/${selectedPeriode.id}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 },
             );
             setIsDeleteModalOpen(false);
-            setSelectedEvent(null);
-            fetchData(currentPage);
+            setSelectedPeriode(null);
+            fetchData();
         } catch (error) {
-            console.error("Error deleting event:", error);
+            console.error("Error deleting periode:", error);
         }
     };
 
     return (
         <DashboardLayout>
             <div className="bg-white p-6 rounded-lg shadow-md">
-                <h1 className="text-2xl font-bold mb-4">Event Management</h1>
-                <p>Halaman untuk mengatur event.</p>
+                <h1 className="text-2xl font-bold mb-4">Periode Management</h1>
+                <p>Halaman untuk mengatur periode kpi.</p>
             </div>
             <div className="bg-white my-8 p-6 rounded-lg shadow-md">
                 <div className="w-full flex pb-4 justify-end border-b-2 border-gray-200">
@@ -149,40 +134,31 @@ function Event() {
                         styling="rounded"
                         onClick={() => setIsCreateModalOpen(true)}
                     >
-                        Tambah Event
+                        Tambah Periode
                     </Button>
                 </div>
                 <div className="py-6">
                     {loading ? (
                         <div className="text-center py-10 text-gray-500">
-                            Loading events...
+                            Loading periodes...
                         </div>
-                    ) : events.length === 0 ? (
+                    ) : periodes.length === 0 ? (
                         <div className="text-center py-10 text-gray-500">
-                            Tidak ada event tersedia.
+                            Tidak ada periode tersedia.
                         </div>
                     ) : (
-                        events.map((event, index) => (
+                        periodes.map((item, index) => (
                             <div
-                                key={event.id}
+                                key={item.id}
                                 className="bg-white border border-gray-100 p-6 my-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col md:flex-row justify-between items-center gap-4"
                             >
                                 <div className="flex-1">
                                     <h2 className="text-xl font-bold text-gray-800 mb-1">
-                                        {event.name_event}
+                                        {item.periode}
                                     </h2>
-                                    <p className="text-gray-600 text-sm mb-2">
-                                        {event.description_event}
-                                    </p>
                                     <p className="text-gray-500 text-sm flex items-center gap-2">
                                         <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs font-medium">
                                             ID: {index}
-                                        </span>
-                                        <span>•</span>
-                                        <span>
-                                            {event.date_event
-                                                ? event.date_event
-                                                : "Belum ada tanggal"}
                                         </span>
                                     </p>
                                 </div>
@@ -191,7 +167,7 @@ function Event() {
                                         variant="secondary"
                                         size="small"
                                         styling="rounded"
-                                        onClick={() => handleEdit(event)}
+                                        onClick={() => handleEdit(item)}
                                     >
                                         <FaPencil />
                                     </Button>
@@ -199,7 +175,7 @@ function Event() {
                                         variant="danger"
                                         size="small"
                                         styling="rounded"
-                                        onClick={() => handleDeleteClick(event)}
+                                        onClick={() => handleDeleteClick(item)}
                                     >
                                         <FaRegTrashCan />
                                     </Button>
@@ -210,19 +186,11 @@ function Event() {
                 </div>
             </div>
 
-            {events.length > 0 && (
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
-            )}
-
             {/* Create Modal */}
             <Modal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                title="Tambah Event Baru"
+                title="Tambah Periode Baru"
                 footer={
                     <>
                         <Button
@@ -244,54 +212,26 @@ function Event() {
                     </>
                 }
             >
-                <form className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Nama Event
-                        </label>
-                        <Input
-                            variant="primary"
-                            size="large"
-                            name="name_event"
-                            placeholder="Contoh: Bakti Sosial"
-                            value={formData.name_event}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Deskripsi
-                        </label>
-                        <textarea
-                            name="description_event"
-                            className="w-full p-2 rounded-xl bg-[#061E29] text-[#F3F4F4] border-3 border-[#061E29] outline-none focus:border-3 focus:border-[#5F9598]"
-                            rows="3"
-                            placeholder="Keterangan event..."
-                            value={formData.description_event}
-                            onChange={handleInputChange}
-                        ></textarea>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Tanggal
-                        </label>
-                        <Input
-                            type="date"
-                            variant="primary"
-                            size="large"
-                            name="date_event"
-                            value={formData.date_event}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                </form>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nama Periode
+                    </label>
+                    <Input
+                        variant="primary"
+                        size="large"
+                        name="periode"
+                        placeholder="Contoh: Januari 2026"
+                        value={formData.periode}
+                        onChange={handleInputChange}
+                    />
+                </div>
             </Modal>
 
             {/* Edit Modal */}
             <Modal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
-                title="Edit Event"
+                title="Edit Periode"
                 footer={
                     <>
                         <Button
@@ -313,45 +253,18 @@ function Event() {
                     </>
                 }
             >
-                <form className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Nama Event
-                        </label>
-                        <Input
-                            variant="primary"
-                            size="large"
-                            name="name_event"
-                            value={formData.name_event}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Deskripsi
-                        </label>
-                        <textarea
-                            name="description_event"
-                            className="w-full p-2 rounded-xl bg-[#061E29] text-[#F3F4F4] border-3 border-[#061E29] outline-none focus:border-3 focus:border-[#5F9598]"
-                            rows="3"
-                            value={formData.description_event}
-                            onChange={handleInputChange}
-                        ></textarea>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Tanggal
-                        </label>
-                        <Input
-                            type="date"
-                            variant="primary"
-                            size="large"
-                            name="date_event"
-                            value={formData.date_event}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                </form>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nama Periode
+                    </label>
+                    <Input
+                        variant="primary"
+                        size="large"
+                        name="periode"
+                        value={formData.periode}
+                        onChange={handleInputChange}
+                    />
+                </div>
             </Modal>
 
             {/* Delete Confirmation Modal */}
@@ -385,14 +298,11 @@ function Event() {
                         <FaRegTrashCan className="text-2xl" />
                     </div>
                     <p className="text-gray-600">
-                        Apakah Anda yakin ingin menghapus event{" "}
+                        Apakah Anda yakin ingin menghapus periode{" "}
                         <span className="font-bold text-gray-800">
-                            "{selectedEvent?.name_event}"
+                            "{selectedPeriode?.periode}"
                         </span>
                         ?
-                    </p>
-                    <p className="text-sm text-gray-400 mt-2">
-                        Tindakan ini tidak dapat dibatalkan.
                     </p>
                 </div>
             </Modal>
@@ -400,4 +310,4 @@ function Event() {
     );
 }
 
-export default Event;
+export default PeriodeManagement;

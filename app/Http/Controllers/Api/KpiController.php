@@ -10,17 +10,21 @@ use App\Models\Periode;
 
 class KpiController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
         $user = auth()->user();
 
         $this->authorize('viewAny', Kpi::class);
 
-        if($user->role->name_role === "Manager") {
-            $kpis = Kpi::all();
-        } elseif($user->role->name_role === "Koordinator") {
-            $kpis = Kpi::whereHas('periode', fn($q) => $q->where('team_id', $user->team_id))->get();
-        } else {
+        if ($request->query('scope') === 'my') {
             $kpis = Kpi::whereHas('periode', fn($q) => $q->where('user_id', $user->id))->get();
+        } else {
+            if($user->role->name_role === "Manager") {
+                $kpis = Kpi::all();
+            } elseif($user->role->name_role === "Koordinator") {
+                $kpis = Kpi::whereHas('periode', fn($q) => $q->where('team_id', $user->team_id))->get();
+            } else {
+                $kpis = Kpi::whereHas('periode', fn($q) => $q->where('user_id', $user->id))->get();
+            }
         }
 
         return response()->json([
@@ -80,11 +84,15 @@ class KpiController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, $kpi)
+    public function update(Request $request, Periode $periode, Kpi $kpi)
     {
-        $kpi = Kpi::findOrFail($kpi);
-        
         $this->authorize('update', $kpi);
+
+        if ($kpi->periode_id !== $periode->id) {
+            return response()->json([
+                'message' => 'KPI tidak ditemukan dalam periode ini',
+            ], 404);
+        }
 
         $request->validate([
             'achievement' => 'nullable|integer|min:0',
@@ -93,9 +101,9 @@ class KpiController extends Controller
             'target' => 'nullable|integer|min:1'
         ]);
 
-        $target = max(1, $kpi->target ?? $request->target);
-        $achievement = max(0, $kpi->achievement ?? $request->achievement);
-        $weight = min(100, max(0, $kpi->weight ?? $request->weight));
+        $target = $request->target ?? $kpi->target;
+        $achievement = $request->achievement ?? $kpi->achievement;
+        $weight = $request->weight ?? $kpi->weight;
 
         $achievementCapped = min($achievement, $target);
 
@@ -110,15 +118,11 @@ class KpiController extends Controller
             default => 'failed',
         };
 
-        $data = [
-            'deskripsi' => $request->deskripsi ?? $kpi->deskripsi,
-            'weight' => $request->weight ?? $kpi->weight,
-            'target' => $request->target ?? $kpi->target,
-            'achievement' => $request->achievement ?? $kpi->achievement,
-        ];
-
         $kpi->update([
-            ...$data,
+            'deskripsi' => $request->deskripsi ?? $kpi->deskripsi,
+            'weight' => $weight,
+            'target' => $target,
+            'achievement' => $achievement,
             'score' => round($score),
             'status' => $status
         ]);

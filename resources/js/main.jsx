@@ -7,6 +7,12 @@ import DashboardKoordinator from "./page/koordinator/Koordinator";
 import DashboardKaryawan from "./page/karyawan/Karyawan";
 import Event from "./page/Event";
 import Auth from "./page/Auth";
+import PeriodeManagement from "./page/manager/Periode";
+import KpiManagement from "./page/manager/Kpi";
+import JobDeskManagement from "./page/manager/JobDesk";
+import UserManagement from "./page/UserManagement";
+import Absensi from "./page/Absensi";
+import MyKpi from "./page/MyKpi";
 import "../css/app.css";
 
 createRoot(document.getElementById("main")).render(
@@ -32,6 +38,54 @@ createRoot(document.getElementById("main")).render(
                     </ProtectedRoute>
                 }
             />
+            <Route
+                path="/dashboard/manager/periode"
+                element={
+                    <ProtectedRoute role="Manager">
+                        <PeriodeManagement />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/manager/kpi"
+                element={
+                    <ProtectedRoute role="Manager">
+                        <KpiManagement />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/manager/jobdesk"
+                element={
+                    <ProtectedRoute role="Manager">
+                        <JobDeskManagement />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/manager/absensi"
+                element={
+                    <ProtectedRoute role="Manager">
+                        <Absensi />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/manager/karyawan"
+                element={
+                    <ProtectedRoute role="Manager">
+                        <UserManagement />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/manager/my-kpi"
+                element={
+                    <ProtectedRoute role="Manager">
+                        <MyKpi />
+                    </ProtectedRoute>
+                }
+            />
 
             {/* Dashboard Koordinator */}
             <Route
@@ -42,6 +96,30 @@ createRoot(document.getElementById("main")).render(
                     </ProtectedRoute>
                 }
             />
+            <Route
+                path="/dashboard/koordinator/absensi"
+                element={
+                    <ProtectedRoute role="Koordinator">
+                        <Absensi />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/koordinator/karyawan"
+                element={
+                    <ProtectedRoute role="Koordinator">
+                        <UserManagement />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/koordinator/my-kpi"
+                element={
+                    <ProtectedRoute role="Koordinator">
+                        <MyKpi />
+                    </ProtectedRoute>
+                }
+            />
 
             {/* Dashboard Karyawan */}
             <Route
@@ -49,6 +127,22 @@ createRoot(document.getElementById("main")).render(
                 element={
                     <ProtectedRoute role="Karyawan">
                         <DashboardKaryawan />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/karyawan/absensi"
+                element={
+                    <ProtectedRoute role="Karyawan">
+                        <Absensi />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/dashboard/karyawan/my-kpi"
+                element={
+                    <ProtectedRoute role="Karyawan">
+                        <MyKpi />
                     </ProtectedRoute>
                 }
             />

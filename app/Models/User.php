@@ -83,6 +83,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the periodes for the user.
+     */
+    public function periodes()
+    {
+        return $this->hasMany(Periode::class);
+    }
+
+    /**
      * Get the absensis for the user.
      */
     public function absensis()

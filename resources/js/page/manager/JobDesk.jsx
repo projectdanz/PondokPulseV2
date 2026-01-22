@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
-import DashboardLayout from "./DashboardLayout";
+import DashboardLayout from "../DashboardLayout";
 import axios from "axios";
-import Button from "../components/Button";
-import Pagination from "../components/Pagination";
-import Modal from "../components/Modal";
-import Input from "../components/Input";
-import { FaPencil, FaRegTrashCan } from "react-icons/fa6";
+import Button from "../../components/Button";
+import Modal from "../../components/Modal";
+import Input from "../../components/Input";
+import { FaPencil, FaRegTrashCan, FaPlus } from "react-icons/fa6";
 
-function Event() {
+function JobDeskManagement() {
     const [loading, setLoading] = useState(true);
-    const [events, setEvents] = useState([]);
-    const [message, setMessage] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [jobDesks, setJobDesks] = useState([]);
 
     // Modal states
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -20,43 +16,37 @@ function Event() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     // Form and selection state
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedJob, setSelectedJob] = useState(null);
     const [formData, setFormData] = useState({
-        name_event: "",
-        description_event: "",
-        date_event: "",
+        name_job: "",
+        description_job: "",
     });
 
     const dataRaw = localStorage.getItem("data");
     const tokenData = dataRaw ? JSON.parse(dataRaw) : null;
     const token = tokenData?.token;
 
-    const fetchData = async (page = 1) => {
+    const fetchData = async () => {
         if (!token) return;
         setLoading(true);
         try {
             const res = await axios.get(
-                `http://127.0.0.1:8000/api/v1/events?page=${page}&per_page=10`,
+                "http://127.0.0.1:8000/api/v1/jobdesks",
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 },
             );
-            setEvents(res.data.data);
-            setMessage(res.data.message);
-            setCurrentPage(res.data.meta.current_page);
-            setTotalPages(res.data.meta.last_page);
+            setJobDesks(res.data.data);
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error("Error fetching jobdesks:", error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchData(currentPage);
-    }, [currentPage]);
+        fetchData();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -64,34 +54,33 @@ function Event() {
     };
 
     const resetForm = () => {
-        setFormData({
-            name_event: "",
-            description_event: "",
-            date_event: "",
-        });
-        setSelectedEvent(null);
+        setFormData({ name_job: "", description_job: "" });
+        setSelectedJob(null);
     };
 
     const handleCreate = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://127.0.0.1:8000/api/v1/events", formData, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            await axios.post(
+                "http://127.0.0.1:8000/api/v1/jobdesks",
+                formData,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                },
+            );
             setIsCreateModalOpen(false);
             resetForm();
-            fetchData(currentPage);
+            fetchData();
         } catch (error) {
-            console.error("Error creating event:", error);
+            console.error("Error creating jobdesk:", error);
         }
     };
 
-    const handleEdit = (event) => {
-        setSelectedEvent(event);
+    const handleEdit = (job) => {
+        setSelectedJob(job);
         setFormData({
-            name_event: event.name_event || "",
-            description_event: event.description_event || "",
-            date_event: event.date_event || "",
+            name_job: job.name_job || "",
+            description_job: job.description_job || "",
         });
         setIsEditModalOpen(true);
     };
@@ -100,7 +89,7 @@ function Event() {
         e.preventDefault();
         try {
             await axios.put(
-                `http://127.0.0.1:8000/api/v1/events/${selectedEvent.id}`,
+                `http://127.0.0.1:8000/api/v1/jobdesks/${selectedJob.id}`,
                 formData,
                 {
                     headers: { Authorization: `Bearer ${token}` },
@@ -108,38 +97,38 @@ function Event() {
             );
             setIsEditModalOpen(false);
             resetForm();
-            fetchData(currentPage);
+            fetchData();
         } catch (error) {
-            console.error("Error updating event:", error);
+            console.error("Error updating jobdesk:", error);
         }
     };
 
-    const handleDeleteClick = (event) => {
-        setSelectedEvent(event);
+    const handleDeleteClick = (job) => {
+        setSelectedJob(job);
         setIsDeleteModalOpen(true);
     };
 
     const handleDeleteConfirm = async () => {
         try {
             await axios.delete(
-                `http://127.0.0.1:8000/api/v1/events/${selectedEvent.id}`,
+                `http://127.0.0.1:8000/api/v1/jobdesks/${selectedJob.id}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 },
             );
             setIsDeleteModalOpen(false);
-            setSelectedEvent(null);
-            fetchData(currentPage);
+            setSelectedJob(null);
+            fetchData();
         } catch (error) {
-            console.error("Error deleting event:", error);
+            console.error("Error deleting jobdesk:", error);
         }
     };
 
     return (
         <DashboardLayout>
             <div className="bg-white p-6 rounded-lg shadow-md">
-                <h1 className="text-2xl font-bold mb-4">Event Management</h1>
-                <p>Halaman untuk mengatur event.</p>
+                <h1 className="text-2xl font-bold mb-4">JobDesk Management</h1>
+                <p>Halaman untuk mengatur deskripsi pekerjaan.</p>
             </div>
             <div className="bg-white my-8 p-6 rounded-lg shadow-md">
                 <div className="w-full flex pb-4 justify-end border-b-2 border-gray-200">
@@ -149,40 +138,34 @@ function Event() {
                         styling="rounded"
                         onClick={() => setIsCreateModalOpen(true)}
                     >
-                        Tambah Event
+                        <FaPlus className="mr-2" /> Tambah JobDesk
                     </Button>
                 </div>
                 <div className="py-6">
                     {loading ? (
                         <div className="text-center py-10 text-gray-500">
-                            Loading events...
+                            Loading jobdesks...
                         </div>
-                    ) : events.length === 0 ? (
+                    ) : jobDesks.length === 0 ? (
                         <div className="text-center py-10 text-gray-500">
-                            Tidak ada event tersedia.
+                            Tidak ada jobdesk tersedia.
                         </div>
                     ) : (
-                        events.map((event, index) => (
+                        jobDesks.map((job, index) => (
                             <div
-                                key={event.id}
+                                key={job.id}
                                 className="bg-white border border-gray-100 p-6 my-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col md:flex-row justify-between items-center gap-4"
                             >
                                 <div className="flex-1">
                                     <h2 className="text-xl font-bold text-gray-800 mb-1">
-                                        {event.name_event}
+                                        {job.name_job}
                                     </h2>
                                     <p className="text-gray-600 text-sm mb-2">
-                                        {event.description_event}
+                                        {job.description_job}
                                     </p>
                                     <p className="text-gray-500 text-sm flex items-center gap-2">
                                         <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs font-medium">
-                                            ID: {index}
-                                        </span>
-                                        <span>•</span>
-                                        <span>
-                                            {event.date_event
-                                                ? event.date_event
-                                                : "Belum ada tanggal"}
+                                            INDEX: {index}
                                         </span>
                                     </p>
                                 </div>
@@ -191,7 +174,7 @@ function Event() {
                                         variant="secondary"
                                         size="small"
                                         styling="rounded"
-                                        onClick={() => handleEdit(event)}
+                                        onClick={() => handleEdit(job)}
                                     >
                                         <FaPencil />
                                     </Button>
@@ -199,7 +182,7 @@ function Event() {
                                         variant="danger"
                                         size="small"
                                         styling="rounded"
-                                        onClick={() => handleDeleteClick(event)}
+                                        onClick={() => handleDeleteClick(job)}
                                     >
                                         <FaRegTrashCan />
                                     </Button>
@@ -210,19 +193,11 @@ function Event() {
                 </div>
             </div>
 
-            {events.length > 0 && (
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
-            )}
-
             {/* Create Modal */}
             <Modal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                title="Tambah Event Baru"
+                title="Tambah JobDesk Baru"
                 footer={
                     <>
                         <Button
@@ -244,17 +219,17 @@ function Event() {
                     </>
                 }
             >
-                <form className="space-y-4">
+                <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Nama Event
+                            Nama Pekerjaan
                         </label>
                         <Input
                             variant="primary"
                             size="large"
-                            name="name_event"
-                            placeholder="Contoh: Bakti Sosial"
-                            value={formData.name_event}
+                            name="name_job"
+                            placeholder="Contoh: Frontend Developer"
+                            value={formData.name_job}
                             onChange={handleInputChange}
                         />
                     </div>
@@ -263,35 +238,22 @@ function Event() {
                             Deskripsi
                         </label>
                         <textarea
-                            name="description_event"
+                            name="description_job"
                             className="w-full p-2 rounded-xl bg-[#061E29] text-[#F3F4F4] border-3 border-[#061E29] outline-none focus:border-3 focus:border-[#5F9598]"
                             rows="3"
-                            placeholder="Keterangan event..."
-                            value={formData.description_event}
+                            placeholder="Keterangan pekerjaan..."
+                            value={formData.description_job}
                             onChange={handleInputChange}
                         ></textarea>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Tanggal
-                        </label>
-                        <Input
-                            type="date"
-                            variant="primary"
-                            size="large"
-                            name="date_event"
-                            value={formData.date_event}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                </form>
+                </div>
             </Modal>
 
             {/* Edit Modal */}
             <Modal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
-                title="Edit Event"
+                title="Edit JobDesk"
                 footer={
                     <>
                         <Button
@@ -313,16 +275,16 @@ function Event() {
                     </>
                 }
             >
-                <form className="space-y-4">
+                <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Nama Event
+                            Nama Pekerjaan
                         </label>
                         <Input
                             variant="primary"
                             size="large"
-                            name="name_event"
-                            value={formData.name_event}
+                            name="name_job"
+                            value={formData.name_job}
                             onChange={handleInputChange}
                         />
                     </div>
@@ -331,27 +293,14 @@ function Event() {
                             Deskripsi
                         </label>
                         <textarea
-                            name="description_event"
+                            name="description_job"
                             className="w-full p-2 rounded-xl bg-[#061E29] text-[#F3F4F4] border-3 border-[#061E29] outline-none focus:border-3 focus:border-[#5F9598]"
                             rows="3"
-                            value={formData.description_event}
+                            value={formData.description_job}
                             onChange={handleInputChange}
                         ></textarea>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Tanggal
-                        </label>
-                        <Input
-                            type="date"
-                            variant="primary"
-                            size="large"
-                            name="date_event"
-                            value={formData.date_event}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                </form>
+                </div>
             </Modal>
 
             {/* Delete Confirmation Modal */}
@@ -385,14 +334,11 @@ function Event() {
                         <FaRegTrashCan className="text-2xl" />
                     </div>
                     <p className="text-gray-600">
-                        Apakah Anda yakin ingin menghapus event{" "}
+                        Apakah Anda yakin ingin menghapus jobdesk{" "}
                         <span className="font-bold text-gray-800">
-                            "{selectedEvent?.name_event}"
+                            "{selectedJob?.name_job}"
                         </span>
                         ?
-                    </p>
-                    <p className="text-sm text-gray-400 mt-2">
-                        Tindakan ini tidak dapat dibatalkan.
                     </p>
                 </div>
             </Modal>
@@ -400,4 +346,4 @@ function Event() {
     );
 }
 
-export default Event;
+export default JobDeskManagement;
